@@ -1,0 +1,18 @@
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+/* custom components */
+.button {
+  @apply px-4 py-2 bg-blue-500 text-white rounded;
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+
+  @keyframes marquee {
+    0%   { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+}

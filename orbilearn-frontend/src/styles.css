@@ -1,1 +1,7 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+body {
+  @apply bg-white text-gray-200;
+  font-family: "Inter", sans-serif;
+}

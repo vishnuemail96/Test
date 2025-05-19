@@ -1,0 +1,11 @@
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+/* custom components */
+.button {
+  @apply px-4 py-2 bg-blue-500 text-white rounded;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

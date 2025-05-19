@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect, createContext, useContext } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Pages
+import OtpVerify from "./pages/VerifyOTP";
+import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
+import Home from "./pages/Home";
+
+// ───────────── Auth Context ─────────────
+export const AuthContext = createContext(null);
+export const useAuth = () => useContext(AuthContext);
+
+function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) setIsAuthenticated(true);
+    setIsLoading(false);
+  }, []);
+
+  const login = (token) => {
+    localStorage.setItem("authToken", token);
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("registrationEmail");
+    setIsAuthenticated(false);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-export default App
+// ───────────── Protected Route ─────────────
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div>Loading...</div>;
+  return isAuthenticated ? children : <Navigate to="/" />;
+}
+
+// ───────────── App Component ─────────────
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          {/* Always show Home on default route */}
+          <Route path="/" element={<Home />} />
+          <Route path="/verify-otp" element={<OtpVerify />} />
+
+          {/* Protected: Only accessible after login */}
+          <Route
+            path="/courses"
+            element={
+              <ProtectedRoute>
+                <Courses />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/courses/:id"
+            element={
+              <ProtectedRoute>
+                <CourseDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Fallback: redirect everything else to home */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
