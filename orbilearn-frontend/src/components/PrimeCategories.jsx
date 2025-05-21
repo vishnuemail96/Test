@@ -1,63 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
+import { getCourseList } from "../services/courseListApi";
+import { useNavigate } from "react-router-dom";
+import Card from "../components/Card";
 
-const courses = [
-  { name: 'Full Stack Java', video: '/videos/java.mp4' },
-  { name: 'Python for Beginners', video: '/videos/python.mp4' },
-  { name: 'React + Node.js', video: '/videos/react-node.mp4' },
-  { name: 'Data Science with Python', video: '/videos/datascience.mp4' },
-  { name: 'DevOps Essentials', video: '/videos/devops.mp4' },
-];
+const PrimeCategories = () => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const hasFetched = useRef(false);
+  const navigate = useNavigate();
 
-const CourseCategories = () => {
-  const [visibleCount, setVisibleCount] = useState(3);
+  useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
 
-  const toggleCourses = () => {
-    setVisibleCount(visibleCount === 3 ? courses.length : 3);
+    getCourseList()
+      .then((response) => {
+        const coursesData = response.data;
+        setCourses(filterPrimeCourses(coursesData));
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error);
+        setError("Failed to load courses");
+        setLoading(false);
+      });
+  }, []);
+
+  const filterPrimeCourses = (coursesData) => {
+    const primeKeywords = ["Full Stack", "AI", "ML", "Cloud", "DevOps"];
+    return coursesData.filter((course) =>
+      primeKeywords.some((keyword) => course.title.toLowerCase().includes(keyword.toLowerCase()))
+    );
   };
 
+  const handleCourseClick = (courseId) => {
+    navigate(`/courses/${courseId}`);
+  };
+
+  if (loading)
+    return (
+      <div className="text-center p-8 text-yellow-500">
+        <span className="loading loading-ring loading-xl"></span>
+      </div>
+    );
+
+  if (error)
+    return <div className="text-center p-8 text-red-500">{error}</div>;
+
+  if (courses.length === 0)
+    return <div className="text-center p-8 text-gray-700">No prime courses available</div>;
+
   return (
-    <div className="bg-white text-black py-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-12">
-          Browse Prime Categories
+    <div className="bg-white min-h-screen py-12 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+          Prime Categories - Top Courses
         </h2>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {courses.slice(0, visibleCount).map((course, idx) => (
-            <div
-              key={idx}
-              className="relative h-48 rounded-xl overflow-hidden shadow-lg group cursor-pointer"
-            >
-              <video
-                src={course.video}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute w-full h-full object-cover filter brightness-50 transition duration-300 group-hover:brightness-75"
-              />
-              <div className="absolute inset-0 flex items-center justify-center z-10">
-                <h3 className="text-xl font-semibold text-white text-center px-4">
-                  {course.name}
-                </h3>
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-0"></div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {courses.map((course) => (
+            <Card
+              key={course.id}
+              data={course}
+              onClick={() => handleCourseClick(course.id)}
+            />
           ))}
-        </div>
-
-        {/* Show More / Show Less Button */}
-        <div className="text-center mt-10">
-          <button
-            onClick={toggleCourses}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-6 rounded-full shadow-md transition duration-300"
-          >
-            {visibleCount === 3 ? 'Show More' : 'Show Less'}
-          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default CourseCategories;
+export default PrimeCategories;

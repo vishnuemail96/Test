@@ -29,8 +29,8 @@ const companies = [
 
 const IndustryLeaders = () => {
   return (
-    <div className="bg-gray-200 py-24 text-center">
-      <h2 className="text-4xl font-bold text-center text-blue-900 mb-18">Industry Leaders from MNCs</h2>
+    <div className="bg-gray-300 py-16 text-center">
+      <h2 className="text-4xl font-bold text-center text-gray-900 mb-14">Industry Leaders from MNCs</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 items-center justify-items-center px-4">
         {companies.map((company, index) => (
           <img

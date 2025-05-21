@@ -99,7 +99,7 @@ const Courses = () => {
         <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
           Available Courses
         </h2>
-
+        
         {/* Modern Pill-Style Category Tabs */}
         <div className="overflow-x-auto mb-10">
           <div className="flex gap-4 justify-start md:justify-center min-w-max">

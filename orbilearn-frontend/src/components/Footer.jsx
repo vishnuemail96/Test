@@ -7,7 +7,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1E3A8A] py-8">
+    <footer className="bg-[#1E3A8A] py-8 ">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Left Section */}

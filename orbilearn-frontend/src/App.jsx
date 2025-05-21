@@ -1,85 +1,99 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// src/App.jsx
+import { createContext, useContext, useEffect, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import axios from 'axios';
+import api from './services/apiInstance';
 
-// Pages
-import OtpVerify from "./pages/VerifyOTP";
-import Courses from "./pages/Courses";
-import CourseDetail from "./pages/CourseDetail";
-import Home from "./pages/Home";
+/* ────────── Pages ────────── */
+import Home from './pages/Home';
+import Login from './components/Login';
+import Register from './components/Register';
+import VerifyOTP from './components/VerifyOTP';
+import Courses from './pages/Courses';
+import CourseDetail from './pages/CourseDetail';
+import Resources from './pages/Resources';
+import Services from './pages/Services';
 
-// ───────────── Auth Context ─────────────
-export const AuthContext = createContext(null);
+/* ────────── Axios Global Settings ────────── */
+axios.defaults.withCredentials = true;
+
+/* ────────── Auth Context ────────── */
+const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
 function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) setIsAuthenticated(true);
-    setIsLoading(false);
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setIsAuthenticated(true);
+      axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    api.get('/auth/login/')
+      .then(() => console.log('CSRF and session cookies initialized'))
+      .catch(err => console.warn('CSRF init failed:', err));
   }, []);
 
   const login = (token) => {
-    localStorage.setItem("authToken", token);
+    localStorage.setItem('authToken', token);
     setIsAuthenticated(true);
+    axios.defaults.headers.common.Authorization = `Bearer token`;
   };
 
   const logout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("registrationEmail");
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('registrationEmail');
     setIsAuthenticated(false);
+    delete axios.defaults.headers.common.Authorization;
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// ───────────── Protected Route ─────────────
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return <div>Loading...</div>;
-  return isAuthenticated ? children : <Navigate to="/" />;
-}
+/* ────────── Route Guard ────────── */
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <div className="p-6 text-center">Loading…</div>;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
 
-// ───────────── App Component ─────────────
-function App() {
+/* ────────── App ────────── */
+export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Always show Home on default route */}
+
+          {/* ─── Public routes ─── */}
           <Route path="/" element={<Home />} />
-          <Route path="/verify-otp" element={<OtpVerify />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/resources" element={<Resources />} /> {/* ✅ */}
+          <Route path="/services" element={<Services />} />   {/* ✅ */}
 
-          {/* Protected: Only accessible after login */}
-          <Route
-            path="/courses"
-            element={
-              <ProtectedRoute>
-                <Courses />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/courses/:id"
-            element={
-              <ProtectedRoute>
-                <CourseDetail />
-              </ProtectedRoute>
-            }
-          />
+          {/* ─── Protected routes ─── */}
+          <Route path="/courses" element={
+            <ProtectedRoute><Courses /></ProtectedRoute>
+          }/>
+          <Route path="/courses/:id" element={
+            <ProtectedRoute><CourseDetail /></ProtectedRoute>
+          }/>
 
-          {/* Fallback: redirect everything else to home */}
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* ─── Catch-all ─── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
   );
 }
-
-export default App;
