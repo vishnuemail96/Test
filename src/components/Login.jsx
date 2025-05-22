@@ -36,7 +36,7 @@ function Login({ onEmailSubmitted, onSessionData }) {
   // Handle email submit to request OTP
   const handleLogin = async () => {
     if (!csrfToken) {
-      alert("CSRF token not found. Please try again.");
+      alert("CSRF token not found. Please try again :)");
       return;
     }
 

@@ -1,16 +1,25 @@
-// ─────────────────────────── src/components/Register.jsx ───────────────────────────
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../services/apiInstance"; // ← use the pre-configured Axios instance
+import api from "../services/apiInstance"; // pre-configured axios instance
 import logo from "/logo1.png";
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    name: "",
+    phone: "",
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Update any field by name
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -18,20 +27,17 @@ export default function Register() {
     setLoading(true);
 
     try {
-      /* STEP 1: prime the csrftoken & session cookies          *
-       * (Django sends them on this GET).                       */
+      // Step 1: Prime csrf token & session cookies
       await api.get("auth/register/");
 
-      /* STEP 2: POST the registration details. Axios will      *
-       * automatically read csrftoken from the cookie and       *
-       * put it in the X-CSRFToken header.                      */
+      // Step 2: Post registration details
       await api.post("auth/register/", {
-        full_name: name,
-        phone_number: phone,
-        email,
+        full_name: formData.name,
+        phone_number: formData.phone,
+        email: formData.email,
       });
 
-      /* STEP 3: go to OTP verification page */
+      // Step 3: Navigate to OTP verify page
       navigate("/verify-otp");
     } catch (err) {
       const msg =
@@ -46,11 +52,9 @@ export default function Register() {
     }
   };
 
-  /* ─────────────────────────── UI ─────────────────────────── */
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 sm:px-6">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-        {/* Logo & tagline */}
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="Orbilearn Logo" className="h-16 sm:h-20 mb-2" />
           <p className="text-sm text-gray-500 text-center">
@@ -65,28 +69,31 @@ export default function Register() {
         <form onSubmit={handleRegister} className="space-y-4">
           <input
             type="text"
+            name="name"
             placeholder="Full Name"
             className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formData.name}
+            onChange={handleChange}
             required
           />
 
           <input
             type="tel"
+            name="phone"
             placeholder="Phone Number"
             className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={formData.phone}
+            onChange={handleChange}
             required
           />
 
           <input
             type="email"
+            name="email"
             placeholder="Email Address"
             className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleChange}
             required
           />
 
