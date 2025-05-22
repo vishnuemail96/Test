@@ -1,26 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const courses = [
   {
-    title: 'Full-Stack Development',
-    slogan: 'One course, total web expertise.',
-    image: '/3.png',
+    title: "Full-Stack Development",
+    slogan: "One course, total web expertise.",
+    image: "/3.png",
   },
   {
-    title: 'Artificial Intelligence & Machine Learning',
-    slogan: 'Transform Lives with AI course',
-    image: '/2.png',
+    title: "Artificial Intelligence & Machine Learning",
+    slogan: "Transform Lives with AI course",
+    image: "/2.png",
   },
   {
-    title: 'Cloud Computing Courses',
-    slogan: 'Get certified. Build real-world skills.',
-    image: '/1.png',
+    title: "Cloud Computing Courses",
+    slogan: "Get certified. Build real-world skills.",
+    image: "/1.png",
   },
 ];
 
 const TypingHeroSection = () => {
   const [index, setIndex] = useState(0);
-  const [displayText, setDisplayText] = useState('');
+  const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [sloganVisible, setSloganVisible] = useState(true);
 
@@ -30,12 +30,14 @@ const TypingHeroSection = () => {
 
     const timer = setTimeout(() => {
       setDisplayText((prev) =>
-        isDeleting ? current.substring(0, prev.length - 1) : current.substring(0, prev.length + 1)
+        isDeleting
+          ? current.substring(0, prev.length - 1)
+          : current.substring(0, prev.length + 1)
       );
 
       if (!isDeleting && displayText === current) {
         setTimeout(() => setIsDeleting(true), 1000);
-      } else if (isDeleting && displayText === '') {
+      } else if (isDeleting && displayText === "") {
         setIsDeleting(false);
         setSloganVisible(false); // fade out
         setTimeout(() => {
@@ -61,7 +63,7 @@ const TypingHeroSection = () => {
 
           <p
             className={`mt-2 text-gray-600 text-lg h-8 transition-opacity duration-500 ${
-              sloganVisible ? 'opacity-100' : 'opacity-0'
+              sloganVisible ? "opacity-100" : "opacity-0"
             }`}
           >
             {slogan}
@@ -90,7 +92,11 @@ const TypingHeroSection = () => {
         </div>
 
         <div className="flex-1 bg-gray-200 rounded-lg shadow-[6px_6px_10px_rgba(0,0,0,0.15)] overflow-hidden">
-          <img src={image} alt="Course Illustration" className="w-full max-w-md mx-auto transition-all duration-500" />
+          <img
+            src={image}
+            alt="Course Illustration"
+            className="w-full max-w-md mx-auto transition-all duration-500"
+          />
         </div>
       </div>
     </section>

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getCourseList } from "../services/courseListApi";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
+import { getCourseList } from "../services/courseListApi";
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -33,7 +33,13 @@ const Courses = () => {
   }, []);
 
   const extractCategories = (coursesData) => {
-    const defaultCategories = ["all", "programming", "data", "cloud", "testing"];
+    const defaultCategories = [
+      "all",
+      "programming",
+      "data",
+      "cloud",
+      "testing",
+    ];
     const categoryMap = {
       Python: "programming",
       Java: "programming",
@@ -65,11 +71,19 @@ const Courses = () => {
       const title = course.title.toLowerCase();
       switch (activeCategory) {
         case "programming":
-          return title.includes("java") || title.includes("python") || title.includes("full stack");
+          return (
+            title.includes("java") ||
+            title.includes("python") ||
+            title.includes("full stack")
+          );
         case "data":
           return title.includes("data") || title.includes("datascience");
         case "cloud":
-          return title.includes("aws") || title.includes("amazon") || title.includes("devops");
+          return (
+            title.includes("aws") ||
+            title.includes("amazon") ||
+            title.includes("devops")
+          );
         case "testing":
           return title.includes("testing");
         default:
@@ -85,11 +99,12 @@ const Courses = () => {
       </div>
     );
 
-  if (error)
-    return <div className="text-center p-8 text-red-500">{error}</div>;
+  if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
 
   if (courses.length === 0)
-    return <div className="text-center p-8 text-gray-700">No courses available</div>;
+    return (
+      <div className="text-center p-8 text-gray-700">No courses available</div>
+    );
 
   const filteredCourses = getFilteredCourses();
 
@@ -99,7 +114,7 @@ const Courses = () => {
         <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
           Available Courses
         </h2>
-        
+
         {/* Modern Pill-Style Category Tabs */}
         <div className="overflow-x-auto mb-10">
           <div className="flex gap-4 justify-start md:justify-center min-w-max">

@@ -1,10 +1,10 @@
-// src/App.jsx
+// ─────────────────────────── src/App.jsx ───────────────────────────
 import { createContext, useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 import api from './services/apiInstance';
 
-/* ────────── Pages ────────── */
+/* ────────── Pages & Components ────────── */
 import Home from './pages/Home';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -35,15 +35,16 @@ function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    api.get('/auth/login/')
-      .then(() => console.log('CSRF and session cookies initialized'))
+    api
+      .get('/auth/login/')
+      .then(() => console.log('CSRF and session cookies initialised'))
       .catch(err => console.warn('CSRF init failed:', err));
   }, []);
 
   const login = (token) => {
     localStorage.setItem('authToken', token);
     setIsAuthenticated(true);
-    axios.defaults.headers.common.Authorization = `Bearer token`;
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   };
 
   const logout = () => {
@@ -60,35 +61,21 @@ function AuthProvider({ children }) {
   );
 }
 
-/* ────────── Route Guard ────────── */
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return <div className="p-6 text-center">Loading…</div>;
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-};
-
 /* ────────── App ────────── */
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-
           {/* ─── Public routes ─── */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
-          <Route path="/resources" element={<Resources />} /> {/* ✅ */}
-          <Route path="/services" element={<Services />} />   {/* ✅ */}
-
-          {/* ─── Protected routes ─── */}
-          <Route path="/courses" element={
-            <ProtectedRoute><Courses /></ProtectedRoute>
-          }/>
-          <Route path="/courses/:id" element={
-            <ProtectedRoute><CourseDetail /></ProtectedRoute>
-          }/>
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/courses/:id" element={<CourseDetail />} />
 
           {/* ─── Catch-all ─── */}
           <Route path="*" element={<Navigate to="/" replace />} />

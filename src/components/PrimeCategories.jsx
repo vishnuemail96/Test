@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getCourseList } from "../services/courseListApi";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
+import { getCourseList } from "../services/courseListApi";
 
 const PrimeCategories = () => {
   const [courses, setCourses] = useState([]);
@@ -30,7 +30,9 @@ const PrimeCategories = () => {
   const filterPrimeCourses = (coursesData) => {
     const primeKeywords = ["Full Stack", "AI", "ML", "Cloud", "DevOps"];
     return coursesData.filter((course) =>
-      primeKeywords.some((keyword) => course.title.toLowerCase().includes(keyword.toLowerCase()))
+      primeKeywords.some((keyword) =>
+        course.title.toLowerCase().includes(keyword.toLowerCase())
+      )
     );
   };
 
@@ -45,11 +47,14 @@ const PrimeCategories = () => {
       </div>
     );
 
-  if (error)
-    return <div className="text-center p-8 text-red-500">{error}</div>;
+  if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
 
   if (courses.length === 0)
-    return <div className="text-center p-8 text-gray-700">No prime courses available</div>;
+    return (
+      <div className="text-center p-8 text-gray-700">
+        No prime courses available
+      </div>
+    );
 
   return (
     <div className="bg-white min-h-screen py-12 px-4 md:px-8">

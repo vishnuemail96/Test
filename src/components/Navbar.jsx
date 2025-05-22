@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaArrowDown } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { FaArrowDown, FaBars, FaTimes } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,20 +14,20 @@ const Navbar = () => {
     setCoursesMenuOpen(false);
   };
 
-  const toggleCoursesMenu = () => setCoursesMenuOpen(prev => !prev);
+  const toggleCoursesMenu = () => setCoursesMenuOpen((prev) => !prev);
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
     setIsLoggedIn(loggedIn);
   }, []);
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem("isLoggedIn");
       setIsLoggedIn(false);
-      navigate('/');
+      navigate("/");
     } catch (err) {
-      console.error('Logout failed', err);
+      console.error("Logout failed", err);
     }
   };
 
@@ -40,15 +40,16 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden lg:flex items-center text-gray-800 text-[16px] font-medium space-x-12">
-          <li><Link to="/" className="hover:text-[#FFB703]">Home</Link></li>
+          <li>
+            <Link to="/" className="hover:text-[#FFB703]">
+              Home
+            </Link>
+          </li>
 
           <li className="relative group">
             <div className="flex items-center">
               {/* Clicking on text goes to /courses */}
-              <Link
-                to="/courses"
-                className="hover:text-[#FFB703]"
-              >
+              <Link to="/courses" className="hover:text-[#FFB703]">
                 All Courses
               </Link>
               {/* Dropdown toggle icon */}
@@ -91,18 +92,32 @@ const Navbar = () => {
             )}
           </li>
 
-          <li><Link to="/services" className="hover:text-[#FFB703]">Services</Link></li>
-          <li><Link to="/resources" className="hover:text-[#FFB703]">Resources</Link></li>
+          <li>
+            <Link to="/services" className="hover:text-[#FFB703]">
+              Services
+            </Link>
+          </li>
+          <li>
+            <Link to="/resources" className="hover:text-[#FFB703]">
+              Resources
+            </Link>
+          </li>
 
           {!isLoggedIn ? (
             <>
               <li>
-                <Link to="/login" className="px-6 py-3 border rounded-md hover:bg-gray-100">
+                <Link
+                  to="/login"
+                  className="px-6 py-3 border rounded-md hover:bg-gray-100"
+                >
                   Login
                 </Link>
               </li>
               <li>
-                <Link to="/register" className="px-6 py-3 bg-[#FFB703] text-white rounded-md hover:bg-yellow-500">
+                <Link
+                  to="/register"
+                  className="px-6 py-3 bg-[#FFB703] text-white rounded-md hover:bg-yellow-500"
+                >
                   Register
                 </Link>
               </li>
@@ -132,7 +147,11 @@ const Navbar = () => {
       {menuOpen && (
         <div className="lg:hidden bg-white px-6 pb-6 pt-4 border-t shadow-lg rounded-b-xl">
           <ul className="flex flex-col text-gray-800 text-[15px] font-medium space-y-4">
-            <li><Link onClick={closeMenu} to="/">Home</Link></li>
+            <li>
+              <Link onClick={closeMenu} to="/">
+                Home
+              </Link>
+            </li>
 
             {/* Mobile All Courses Dropdown */}
             <li className="relative">
@@ -141,7 +160,7 @@ const Navbar = () => {
                   className="cursor-pointer hover:text-[#FFB703]"
                   onClick={() => {
                     closeMenu();
-                    navigate('/courses');
+                    navigate("/courses");
                   }}
                 >
                   All Courses
@@ -184,8 +203,16 @@ const Navbar = () => {
               )}
             </li>
 
-            <li><Link onClick={closeMenu} to="/services">Services</Link></li>
-            <li><Link onClick={closeMenu} to="/resources">Resources</Link></li>
+            <li>
+              <Link onClick={closeMenu} to="/services">
+                Services
+              </Link>
+            </li>
+            <li>
+              <Link onClick={closeMenu} to="/resources">
+                Resources
+              </Link>
+            </li>
 
             {!isLoggedIn ? (
               <>

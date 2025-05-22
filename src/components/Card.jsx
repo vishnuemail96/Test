@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const Card = ({ data, onClick }) => {
@@ -36,7 +35,9 @@ const Card = ({ data, onClick }) => {
 
       {/* Content */}
       <div className="flex-1 px-4 py-3 flex flex-col justify-between">
-        <h3 className="text-lg font-semibold text-[#1E3A8A] mb-2">{data.title}</h3>
+        <h3 className="text-lg font-semibold text-[#1E3A8A] mb-2">
+          {data.title}
+        </h3>
 
         {data.duration && (
           <span className="inline-block bg-[#E0E7FF] text-[#1D4ED8] text-xs px-2 py-1 rounded mb-2">
@@ -46,7 +47,9 @@ const Card = ({ data, onClick }) => {
 
         {data.average_package && (
           <div className="mb-3 text-sm text-[#334155]">
-            <p className="font-medium text-[#1E40AF]">{data.average_package.package}</p>
+            <p className="font-medium text-[#1E40AF]">
+              {data.average_package.package}
+            </p>
             <p>{data.average_package.salary_hike}</p>
           </div>
         )}

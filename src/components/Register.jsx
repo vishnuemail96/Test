@@ -1,16 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+// ─────────────────────────── src/components/Register.jsx ───────────────────────────
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../services/apiInstance"; // ← use the pre-configured Axios instance
 import logo from "/logo1.png";
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-  return "";
-}
-
-function Register() {
+export default function Register() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -24,32 +18,20 @@ function Register() {
     setLoading(true);
 
     try {
-      // Step 1: GET request to obtain CSRF + session
-      await axios.get("https://orbilearn.com/api/auth/register/", {
-        withCredentials: true,
+      /* STEP 1: prime the csrftoken & session cookies          *
+       * (Django sends them on this GET).                       */
+      await api.get("auth/register/");
+
+      /* STEP 2: POST the registration details. Axios will      *
+       * automatically read csrftoken from the cookie and       *
+       * put it in the X-CSRFToken header.                      */
+      await api.post("auth/register/", {
+        full_name: name,
+        phone_number: phone,
+        email,
       });
 
-      // Step 2: Read CSRF token from cookie
-      const csrfToken = getCookie("csrftoken");
-
-      // Step 3: POST registration details
-      await axios.post(
-        "https://orbilearn.com/api/auth/register/",
-        {
-          full_name: name,
-          phone_number: phone,
-          email: email,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken,
-          },
-          withCredentials: true,
-        }
-      );
-
-      // Step 4: Redirect to OTP verification
+      /* STEP 3: go to OTP verification page */
       navigate("/verify-otp");
     } catch (err) {
       const msg =
@@ -64,13 +46,15 @@ function Register() {
     }
   };
 
+  /* ─────────────────────────── UI ─────────────────────────── */
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 sm:px-6">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+        {/* Logo & tagline */}
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="Orbilearn Logo" className="h-16 sm:h-20 mb-2" />
           <p className="text-sm text-gray-500 text-center">
-            Learn Full Stack, AI/ML, Cloud & More
+            Learn Full Stack, AI/ML, Cloud &amp; More
           </p>
         </div>
 
@@ -113,7 +97,7 @@ function Register() {
             disabled={loading}
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded-lg transition duration-300"
           >
-            {loading ? "Registering..." : "Register"}
+            {loading ? "Registering…" : "Register"}
           </button>
         </form>
 
@@ -126,5 +110,3 @@ function Register() {
     </div>
   );
 }
-
-export default Register;

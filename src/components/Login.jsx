@@ -3,27 +3,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "/logo1.png";
 
+// Set default to send cookies on all axios requests
+axios.defaults.withCredentials = true;
+
 function Login({ onEmailSubmitted, onSessionData }) {
   const [email, setEmail] = useState("");
 
   const handleLogin = async () => {
     try {
-      // Step 1: GET CSRF Token
-      await axios.get("https://orbilearn.com/api/auth/login/", {
-        withCredentials: true,
-      });
+      // Step 1: GET CSRF Token from response headers
+      const response = await axios.get("https://orbilearn.com/api/auth/login/");
+      const csrfToken =
+        response.headers["x-csrftoken"] || response.headers["x-xsrf-token"];
 
-      // Extract CSRF token and sessionid from cookies
-      const cookies = document.cookie.split(";").reduce((acc, cookie) => {
-        const [key, value] = cookie.trim().split("=");
-        acc[key] = value;
-        return acc;
-      }, {});
-      const csrfToken = cookies.csrftoken;
-      const sessionId = cookies.sessionid;
-
-      if (!csrfToken || !sessionId) {
-        alert("Failed to get CSRF token or session. Please try again.");
+      if (!csrfToken) {
+        alert("Failed to get CSRF token from response. Please try again.");
         return;
       }
 
@@ -36,12 +30,12 @@ function Login({ onEmailSubmitted, onSessionData }) {
             "X-CSRFToken": csrfToken,
             "Content-Type": "application/json",
           },
-          withCredentials: true,
         }
       );
 
+      // Optional: Send CSRF token back to parent component
       if (onSessionData) {
-        onSessionData({ csrfToken, sessionId });
+        onSessionData({ csrfToken });
       }
 
       alert("OTP sent to your email");
@@ -50,7 +44,7 @@ function Login({ onEmailSubmitted, onSessionData }) {
         onEmailSubmitted(email);
       }
 
-      // Step 3: Redirect to OTP page
+      // Redirect to OTP page
       window.location.href = "https://orbilearn.com/api/auth/verify-otp/";
     } catch (error) {
       if (error.response?.status === 401) {
@@ -58,7 +52,7 @@ function Login({ onEmailSubmitted, onSessionData }) {
       } else {
         alert("Login failed. Please try again.");
       }
-      console.error(error);
+      console.error("Login error:", error);
     }
   };
 
@@ -73,12 +67,10 @@ function Login({ onEmailSubmitted, onSessionData }) {
           </h2>
         </div>
 
-        {/* Instruction */}
         <p className="text-gray-600 text-sm mb-4 text-center">
           Enter your email to receive a One-Time Password (OTP)
         </p>
 
-        {/* Input */}
         <input
           type="email"
           placeholder="Enter your email"
@@ -88,7 +80,6 @@ function Login({ onEmailSubmitted, onSessionData }) {
           required
         />
 
-        {/* Button */}
         <button
           onClick={handleLogin}
           className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded-lg transition duration-300"
@@ -96,7 +87,6 @@ function Login({ onEmailSubmitted, onSessionData }) {
           Send OTP
         </button>
 
-        {/* Navigation Links */}
         <div className="text-center mt-4 space-y-2">
           <p className="text-sm text-gray-600">
             Don’t have an account?{" "}

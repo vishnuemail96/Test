@@ -13,9 +13,7 @@ const Footer = () => {
           {/* Left Section */}
           <div className="mb-6 md:mb-0">
             <h3 className="text-3xl font-bold">OrbiLearn</h3>
-            <p className="mt-2">
-              Empowering your learning journey
-            </p>
+            <p className="mt-2">Empowering your learning journey</p>
           </div>
 
           {/* Center Section - Links */}

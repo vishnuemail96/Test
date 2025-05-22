@@ -1,47 +1,29 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return '';
-}
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/apiInstance"; // ⬅️  use the shared Axios instance
 
 export default function VerifyOTP() {
-  const [otp, setOtp] = useState('');
-  const [error, setError] = useState('');
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleVerify = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const csrfToken = getCookie('csrftoken');
+      // Axios automatically puts X-CSRFToken on the request
+      await api.post("auth/verify-otp/", { otp });
 
-      await axios.post(
-        'https://orbilearn.com/api/auth/verify-otp/',
-        { otp },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-          },
-          withCredentials: true,
-        }
-      );
-
-      // OTP verified, go to home or courses
-      navigate('/');
+      // success → go wherever you like
+      navigate("/");
     } catch (err) {
       const msg =
-        err?.response?.data?.otp?.[0] ||
-        err?.response?.data?.detail ||
-        'OTP verification failed. Please try again.';
+        err?.response?.data?.otp?.[0] ??
+        err?.response?.data?.detail ??
+        "OTP verification failed. Please try again.";
       setError(msg);
       console.error(err);
     } finally {
@@ -58,6 +40,7 @@ export default function VerifyOTP() {
         <p className="text-sm text-gray-600 text-center mb-4">
           Enter the OTP sent to your email
         </p>
+
         <form onSubmit={handleVerify} className="space-y-4">
           <input
             type="text"
@@ -67,15 +50,15 @@ export default function VerifyOTP() {
             required
             className="text-gray-600 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
           />
-          {error && (
-            <p className="text-sm text-red-600 text-center">{error}</p>
-          )}
+
+          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded-lg transition duration-300"
           >
-            {loading ? 'Verifying...' : 'Verify OTP'}
+            {loading ? "Verifying…" : "Verify OTP"}
           </button>
         </form>
       </div>
