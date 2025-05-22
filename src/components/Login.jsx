@@ -1,27 +1,46 @@
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "/logo1.png";
+import logo from "/logo1.png"; 
 
-// Set default to send cookies on all axios requests
+// Enable credentials (cookies) for cross-origin requests
 axios.defaults.withCredentials = true;
 
 function Login({ onEmailSubmitted, onSessionData }) {
   const [email, setEmail] = useState("");
+  const [csrfToken, setCsrfToken] = useState("");
 
-  const handleLogin = async () => {
-    try {
-      // Step 1: GET CSRF Token from response headers
-      const response = await axios.get("https://orbilearn.com/api/auth/login/");
-      const csrfToken =
-        response.headers["x-csrftoken"] || response.headers["x-xsrf-token"];
-
-      if (!csrfToken) {
-        alert("Failed to get CSRF token from response. Please try again.");
-        return;
+  // Fetch CSRF token on component mount
+  useEffect(() => {
+    const fetchCSRFToken = async () => {
+      try {
+        const response = await axios.get("https://orbilearn.com/api/auth/login/");
+        const token =
+          response.headers["x-csrftoken"] || response.headers["x-xsrf-token"];
+        if (token) {
+          setCsrfToken(token);
+          if (onSessionData) {
+            onSessionData({ csrfToken: token });
+          }
+        } else {
+          console.warn("CSRF token not found in headers.");
+        }
+      } catch (error) {
+        console.error("Failed to fetch CSRF token:", error);
       }
+    };
 
-      // Step 2: POST email to request OTP
+    fetchCSRFToken();
+  }, [onSessionData]);
+
+  // Handle email submit to request OTP
+  const handleLogin = async () => {
+    if (!csrfToken) {
+      alert("CSRF token not found. Please try again.");
+      return;
+    }
+
+    try {
       await axios.post(
         "https://orbilearn.com/api/auth/login/",
         { email },
@@ -33,18 +52,12 @@ function Login({ onEmailSubmitted, onSessionData }) {
         }
       );
 
-      // Optional: Send CSRF token back to parent component
-      if (onSessionData) {
-        onSessionData({ csrfToken });
-      }
-
-      alert("OTP sent to your email");
-
+      alert("OTP sent to your email.");
       if (onEmailSubmitted) {
         onEmailSubmitted(email);
       }
 
-      // Redirect to OTP page
+      // Optional redirect (replace if you're using React Router)
       window.location.href = "https://orbilearn.com/api/auth/verify-otp/";
     } catch (error) {
       if (error.response?.status === 401) {
@@ -59,7 +72,7 @@ function Login({ onEmailSubmitted, onSessionData }) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4 sm:px-6">
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-md w-full max-w-md">
-        {/* Logo and Welcome */}
+        {/* Logo and Title */}
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="Orbilearn Logo" className="h-16 sm:h-20 mb-2" />
           <h2 className="text-xl font-semibold text-center text-gray-800">
