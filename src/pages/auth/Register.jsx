@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../services/apiInstance"; // pre-configured axios instance
+import api from "../../services/apiInstance"; // pre-configured axios instance
 import logo from "/logo1.png";
 
 export default function Register() {

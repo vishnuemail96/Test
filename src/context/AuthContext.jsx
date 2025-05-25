@@ -1,26 +1,18 @@
-// src/context/AuthContext.js
-import React, { createContext, useContext, useState } from 'react';
+// src/context/AuthContext.jsx
+import { createContext, useState, useEffect } from "react";
+import * as tokenUtils from "../utils/token";
 
-const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('token'));
-
-  const login = (newToken) => {
-    setToken(newToken);
-    localStorage.setItem('token', newToken);
-  };
-
-  const logout = () => {
-    setToken(null);
-    localStorage.removeItem('token');
-  };
+  const [auth, setAuth] = useState(() => {
+    const refresh = tokenUtils.loadRefresh();
+    return { user: null, access: null, refresh };
+  });
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ auth, setAuth }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

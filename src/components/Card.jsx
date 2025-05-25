@@ -3,9 +3,14 @@ import { useNavigate } from "react-router-dom";
 const Card = ({ data, onClick }) => {
   const navigate = useNavigate();
 
+  /** If your API objects use either `batch_id` or `id`,
+   *  fall back to whichever exists. */
+  const batchId = data.batch_id ?? data.id;
+
+  /* ---------- handlers ---------- */
   const handleEnroll = (e) => {
-    e.stopPropagation();
-    alert(`Enrolling in ${data.title}`);
+    e.stopPropagation();                 // keep parent onClick from firing
+    navigate(`/start-payment/${batchId}`);
   };
 
   const handleViewDetails = (e) => {
@@ -13,12 +18,13 @@ const Card = ({ data, onClick }) => {
     navigate(`/courses/${data.id}`);
   };
 
+  /* ---------- UI ---------- */
   return (
     <div
       className="w-full max-w-xs mx-auto bg-white rounded-lg shadow-md hover:shadow-2xl hover:scale-[1.02] transition duration-300 cursor-pointer flex flex-col"
       onClick={onClick}
     >
-      {/* Image */}
+      {/* Card image */}
       <div className="h-40 rounded-t-lg overflow-hidden bg-[#F1F5F9] flex items-center justify-center">
         {data.image ? (
           <img
@@ -33,7 +39,7 @@ const Card = ({ data, onClick }) => {
         )}
       </div>
 
-      {/* Content */}
+      {/* Card content */}
       <div className="flex-1 px-4 py-3 flex flex-col justify-between">
         <h3 className="text-lg font-semibold text-[#1E3A8A] mb-2">
           {data.title}
@@ -60,6 +66,7 @@ const Card = ({ data, onClick }) => {
               {data.nearest_batch_date}
             </span>
           )}
+
           <div className="flex gap-2 flex-wrap justify-end">
             <button
               onClick={handleViewDetails}
