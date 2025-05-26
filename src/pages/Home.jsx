@@ -1,4 +1,5 @@
 // Import components
+import React from "react";
 import EducationFeatures from "../components/EducationFeatures";
 import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";

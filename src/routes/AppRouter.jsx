@@ -1,12 +1,14 @@
 import { Routes, Route } from "react-router-dom";
+import React from "react";
+
 
 // ─── Guards ─────────────────────────────────────────────────────────
 import Protected from "./Protected";
 
 // ─── Auth flow (public) ─────────────────────────────────────────────
-import Login from "../pages/auth/Login";
-import VerifyOtp from "../pages/auth/VerifyOtp";
-import Register from "../pages/auth/Register";
+import Login from "../pages/auth/Login.jsx";
+import VerifyOtp from "../pages/auth/VerifyOTP.jsx";
+import Register from "../pages/auth/Register.jsx";
 
 // ─── Public pages ───────────────────────────────────────────────────
 import Home from "../pages/Home";

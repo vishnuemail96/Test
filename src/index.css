@@ -1,10 +1,16 @@
-@import "tailwindcss/preflight";
-@tailwind utilities;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* custom components */
+/* DaisyUI plugin is configured in tailwind.config.js — NOT here */
+
+/* Custom global styles */
+body {
+  @apply bg-white text-gray-800; /* change text-gray-200 to gray-800 for visibility */
+  font-family: 'Inter', sans-serif;
+}
+
+/* Optional utility class */
 .button {
   @apply px-4 py-2 bg-blue-500 text-white rounded;
 }
@@ -15,7 +21,11 @@
   }
 
   @keyframes marquee {
-    0%   { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
 }

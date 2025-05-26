@@ -4,6 +4,8 @@ import { FaArrowDown, FaBars, FaTimes } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext.jsx";
 import useAxios from "../hooks/useAxios";
 import { clearRefresh } from "../utils/token";
+import React from "react";
+
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);

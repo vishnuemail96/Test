@@ -1,3 +1,6 @@
+import React from "react";
+
+
 const features = [
   {
     title: "Interactive Lessons",

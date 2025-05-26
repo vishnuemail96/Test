@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import { getCourseList } from "../services/courseListApi";
+import React from "react";
+
 
 const PrimeCategories = () => {
   const [courses, setCourses] = useState([]);

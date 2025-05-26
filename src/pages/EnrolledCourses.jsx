@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import useAxios from "../hooks/useAxios";
 import { formatMoney } from "../utils/formatMoney";
+import React from "react";
+
 
 export default function EnrolledCourses() {
   const axios = useAxios();

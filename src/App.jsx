@@ -1,17 +1,16 @@
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+// ─── React & React Router ────────────────────────────────────────────
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
 
 // ─── Context & Routing ──────────────────────────────────────────────
 import { AuthProvider } from "./context/AuthContext";
 import AppRouter from "./routes/AppRouter";
 
-/**
- * Root component — wraps the entire application with:
- *  • <AuthProvider>  → manages JWT tokens & user profile
- *  • <BrowserRouter> → provides client‑side routing
- *  • <AppRouter>     → actual <Routes> tree (incl. protected routes)
- *  • <Toaster>       → global toast notifications
- */
 export default function App() {
   return (
     <AuthProvider>

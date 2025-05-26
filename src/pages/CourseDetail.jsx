@@ -16,6 +16,8 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCourseDetailsById } from "../services/courseDetailsApi";
+import React from "react";
+
 
 const CourseDetail = () => {
   const { id } = useParams();

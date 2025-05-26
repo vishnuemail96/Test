@@ -1,6 +1,11 @@
+// tailwind.config.js
 module.exports = {
-  content: ["./index.html", "./src/**/*.{js,jsx}"],
-  darkMode: "class",
-  theme: { extend: {} },
-  plugins: [],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}", // important for React!
+    "./public/index.html",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [require("daisyui")],
 };

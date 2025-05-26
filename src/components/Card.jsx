@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import React from "react";
+
 
 const Card = ({ data, onClick }) => {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const Card = ({ data, onClick }) => {
 
   const handleViewDetails = (e) => {
     e.stopPropagation();
-    navigate(`/courses/${data.id}`);
+    navigate(`/courses/${id}`);
   };
 
   /* ---------- UI ---------- */
