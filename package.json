@@ -11,6 +11,7 @@
     "proxy": "https://orbilearn.com"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.7",
     "axios": "^1.9.0",
     "daisyui": "^5.0.37",
     "framer-motion": "^12.12.2",
