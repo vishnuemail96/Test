@@ -1,18 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+@import "tailwindcss";
 /* DaisyUI plugin is configured in tailwind.config.js — NOT here */
 
 /* Custom global styles */
 body {
-  @apply bg-white text-gray-800; /* change text-gray-200 to gray-800 for visibility */
+  @apply text-gray-800 bg-white; /* change text-gray-200 to gray-800 for visibility */
   font-family: 'Inter', sans-serif;
 }
 
 /* Optional utility class */
 .button {
-  @apply px-4 py-2 bg-blue-500 text-white rounded;
+  @apply px-4 py-2 text-white bg-blue-500 rounded;
 }
 
 @layer utilities {
